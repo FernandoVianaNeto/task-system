@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
-	"task-system/cmd/configs"
+	configs "task-system/cmd/config"
 	"task-system/internal/infrastructure/web"
 	mysql_pkg "task-system/pkg/mysql"
 )

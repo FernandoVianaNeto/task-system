@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
-	"task-system/cmd/configs"
+	configs "task-system/cmd/config"
 	app "task-system/internal/application"
 )
 

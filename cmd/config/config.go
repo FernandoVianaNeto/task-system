@@ -42,12 +42,6 @@ func InitializeConfigs() {
 	initializeMySqlConfings()
 }
 
-type Sentry struct {
-	DSN        string
-	Debug      bool
-	SampleRate float64
-}
-
 func getEnv(key string, defaultVal string) string {
 	value, exists := os.LookupEnv(key)
 

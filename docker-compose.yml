@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  task-system:
+    build:
+      context: ./
+      dockerfile: .setup/build/Dockerfile
+    container_name: "task-system"
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - .:/go/src
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_go
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    ports:
+      - "3307:3307"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
