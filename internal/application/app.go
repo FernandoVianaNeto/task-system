@@ -2,39 +2,30 @@ package app
 
 import (
 	"context"
+	"fmt"
+	"task-system/cmd/configs"
 	"task-system/internal/infrastructure/web"
+	mysql_pkg "task-system/pkg/mysql"
 )
-
-type Application struct {
-	UseCases UseCases
-}
-
-type Clients struct {
-	planApi    client.CPMApiClientInterface
-	freightApi client.FreightApiClientInterface
-}
-
-type UseCases struct {
-}
 
 func NewApplication() *web.Server {
 	ctx := context.Background()
 
-	mongoConnectionInput := mongoPkg.MongoInput{
-		DSN:      configs.MongoCfg.Dsn,
-		Database: configs.MongoCfg.Database,
+	mysqlConnectionInput := mysql_pkg.MySqlInput{
+		User:     configs.MySqlCfg.User,
+		Password: configs.MySqlCfg.Password,
+		Host:     configs.MySqlCfg.Host,
+		Port:     configs.MySqlCfg.Port,
+		Name:     configs.MySqlCfg.Name,
 	}
 
-	db := mongoPkg.NewMongoDatabase(ctx, mongoConnectionInput)
+	db, err := mysql_pkg.ConnectToDatabase(mysqlConnectionInput)
 
-	repository := mongo_repository.NewFreightPlanExtensionRepository(db)
+	if err != nil {
+		fmt.Println(err, "Failed to connect to database")
+	}
 
-	clients := NewClients()
-
-	usecases := NewUseCases(ctx, clients, repository)
-
-	hasher := hasher.InitializeHasher()
-	hash := hash.NewHasherAdapter(hasher)
+	fmt.Println(db, "Failed to connect to database")
 
 	srv := web.NewServer(ctx)
 

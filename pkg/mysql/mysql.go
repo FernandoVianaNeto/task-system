@@ -1,4 +1,4 @@
-package main
+package mysql_pkg
 
 import (
 	"database/sql"
@@ -8,16 +8,16 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const (
-	dbUser     = "user"
-	dbPassword = "password"
-	dbHost     = "127.0.0.1"
-	dbPort     = "3306"
-	dbName     = "mydatabase"
-)
+type MySqlInput struct {
+	User     string
+	Password string
+	Host     string
+	Port     string
+	Name     string
+}
 
-func ConnectToDatabase() (*sql.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", dbUser, dbPassword, dbHost, dbPort, dbName)
+func ConnectToDatabase(input MySqlInput) (*sql.DB, error) {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", input.User, input.Password, input.Host, input.Port, input.Name)
 
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
@@ -27,12 +27,12 @@ func ConnectToDatabase() (*sql.DB, error) {
 	for i := 0; i < 10; i++ {
 		err = db.Ping()
 		if err == nil {
-			fmt.Println("Conectado ao MySQL com sucesso!")
+			fmt.Println("Successfully connected")
 			return db, nil
 		}
-		fmt.Println("Tentando conectar ao MySQL...")
+		fmt.Println("Trying to connect to mysql database")
 		time.Sleep(1 * time.Second)
 	}
 
-	return nil, fmt.Errorf("Falha ao conectar ao MySQL: %v", err)
+	return nil, fmt.Errorf("Failed to connect to mysql database: %v", err)
 }
