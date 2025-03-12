@@ -1,97 +1,61 @@
 package repository
 
-// import (
-// 	"context"
-// 	"errors"
-// 	"log"
+import (
+	"context"
+	"task-system/internal/domain/entities"
+	"task-system/internal/infrastructure/repository/models"
 
-// )
+	"gorm.io/gorm"
+)
 
-// type TaskRepository struct {
-// }
+type TaskRepository struct {
+	db *gorm.DB
+}
 
-// func NewFreightPlanExtensionRepository(db *mongo.Database) domain_repository.PayPerUseRepositoryInterface {
-// 	collection := db.Collection(configs.MongoCfg.PayPerUseCollection)
+func NewTaskRepository(db *gorm.DB) *TaskRepository {
+	return &TaskRepository{db: db}
+}
 
-// 	return &FreightPlanExtensionRepository{
-// 		db:         db,
-// 		collection: collection,
-// 	}
-// }
+func (r *TaskRepository) CreateTask(ctx context.Context, userUuid string, input entities.Task) error {
+	result := r.db.WithContext(ctx).Create(models.TaskModel{
+		Id:        input.Id,
+		Uuid:      input.Uuid,
+		User:      input.User,
+		Title:     input.Title,
+		Summary:   input.Summary,
+		CreatedAt: input.CreatedAt,
+		Status:    input.Status,
+	})
 
-// func (f *FreightPlanExtensionRepository) GetActivePlanExtensionByFreightId(ctx context.Context, freightId int) (*entity.PlanExtension, error) {
-// 	var model FreightPlanExtensionModel
+	if result.Error != nil {
+		return result.Error
+	}
 
-// 	filter := bson.M{
-// 		"freight_id": freightId,
-// 		"disabled":   false,
-// 	}
+	return nil
+}
 
-// 	err := f.collection.FindOne(ctx, filter).Decode(&model)
+// func (r *TaskRepository) GetTaskByUser(ctx context.Context, taskUuid string, userUuid string) (*entities.Task, error) {
+// 	result := r.db.WithContext(ctx).Create(&input)
 
-// 	if err != nil {
-// 		if errors.Is(err, mongo.ErrNoDocuments) {
-// 			return nil, nil
-// 		}
-
-// 		return nil, err
-// 	}
-
-// 	entity := entity.PlanExtension{
-// 		FreightID:           model.FreightID,
-// 		Type:                model.Type,
-// 		CreatedAt:           model.CreatedAt,
-// 		CompanyId:           model.CompanyId,
-// 		UserId:              model.UserId,
-// 		TruckersExtraAmount: model.TruckersExtraAmount,
-// 		Disabled:            model.Disabled,
-// 	}
-
-// 	return &entity, nil
-// }
-
-// func (f *FreightPlanExtensionRepository) CreatePlanExtension(ctx context.Context, input entity.PlanExtension) error {
-// 	_, err := f.collection.InsertOne(ctx, FreightPlanExtensionModel{
-// 		FreightID:           input.FreightID,
-// 		CreatedAt:           input.CreatedAt,
-// 		Type:                input.Type,
-// 		CompanyId:           input.CompanyId,
-// 		TruckersExtraAmount: input.TruckersExtraAmount,
-// 		UserId:              input.UserId,
-// 		FreeConsumption:     input.FreeConsumption,
-// 	})
-
-// 	if err != nil {
-// 		return err
+// 	if result.Error != nil {
+// 		return result.Error
 // 	}
 
 // 	return nil
 // }
 
-// func (f *FreightPlanExtensionRepository) DisableExtension(ctx context.Context, input entity.DisableExtensionEntity) error {
-// 	filter := bson.M{
-// 		"freight_id": input.FreightId,
-// 		"disabled":   false,
+// func (r *TaskRepository) UpdateTaskByUser(ctx context.Context, userUuid string, input entities.Task) error {
+// 	result := r.db.WithContext(ctx).
+// 		Model(&models.PlanExtension{}).
+// 		Where("freight_id = ? AND disabled = ?", freightId, false).
+// 		Update("disabled", true).
+// 		Update("disable_reason", disableReason)
+
+// 	if result.Error != nil {
+// 		return result.Error
 // 	}
 
-// 	updateFreight := bson.M{
-// 		"$set": bson.M{
-// 			"disabled":       input.Disabled,
-// 			"disable_reason": input.DisableReason,
-// 		},
-// 	}
-
-// 	result, err := f.collection.UpdateOne(
-// 		ctx,
-// 		filter,
-// 		updateFreight,
-// 	)
-
-// 	if err != nil {
-// 		return err
-// 	}
-
-// 	log.Println(result.ModifiedCount)
+// 	log.Println(fmt.Sprintf("Extensão desativada para o frete %d", freightId))
 
 // 	return nil
 // }

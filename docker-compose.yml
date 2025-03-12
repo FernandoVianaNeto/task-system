@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 services:
   task-system:
@@ -12,6 +12,10 @@ services:
       - .env
     volumes:
       - .:/go/src
+    depends_on:
+      - mysql
+    command: [ "sh", "-c", "sleep 10 && /bin/application" ]
+
   mysql:
     image: mysql:8.0
     container_name: mysql_go
@@ -22,7 +26,7 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     ports:
-      - "3307:3307"
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
 

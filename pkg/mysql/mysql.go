@@ -1,11 +1,12 @@
 package mysql_pkg
 
 import (
-	"database/sql"
 	"fmt"
-	"time"
+	"log"
 
 	_ "github.com/go-sql-driver/mysql"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 type MySqlInput struct {
@@ -16,23 +17,19 @@ type MySqlInput struct {
 	Name     string
 }
 
-func ConnectToDatabase(input MySqlInput) (*sql.DB, error) {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", input.User, input.Password, input.Host, input.Port, input.Name)
+var DB *gorm.DB
 
-	db, err := sql.Open("mysql", dsn)
+func ConnectToDatabase(input MySqlInput) (*gorm.DB, error) {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", input.User, input.Password, input.Host, input.Port, input.Name)
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
+		log.Fatal("Could not connect to the database:", err)
+
 		return nil, err
 	}
 
-	for i := 0; i < 10; i++ {
-		err = db.Ping()
-		if err == nil {
-			fmt.Println("Successfully connected")
-			return db, nil
-		}
-		fmt.Println("Trying to connect to mysql database")
-		time.Sleep(1 * time.Second)
-	}
+	DB = db
+	log.Println("Database successfully connected")
 
-	return nil, fmt.Errorf("Failed to connect to mysql database: %v", err)
+	return db, nil
 }
