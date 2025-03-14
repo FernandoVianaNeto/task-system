@@ -6,10 +6,10 @@ import (
 
 func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 	{
-		// task := engine.Group("/task")
-		// {
-		// 	task.POST("/suggested-truckers-extension", server.ConsumePlanHandler)
-		// }
+		task := engine.Group("/task")
+		{
+			task.POST("/", server.CreateTaskHandler)
+		}
 	}
 
 	return engine

@@ -28,7 +28,7 @@ help:
 ## run/api: run the cmd/api application
 .PHONY: run/api
 run/api:
-	@go run ./cmd/api/...
+	@go run ./cmd/...
 
 current_time = $(shell date "+%Y-%m-%dT%H:%M:%S%z")
 git_description = $(shell git describe --always --dirty --tags --long)
@@ -55,7 +55,7 @@ clean/apps:
 ## docker/build: build the local environment for development
 .PHONY: docker/build
 docker/build:
-	docker build -t task-system:latest -f .setup/build/Dockerfile --build-arg GITLAB_USER=${GITLAB_USER} --build-arg GITLAB_PASSWORD=${GITLAB_PASSWORD} .
+	docker build -t task-system:latest -f .setup/build/Dockerfile .
 
 ## docker/up: start the local stack in background
 .PHONY: docker/up

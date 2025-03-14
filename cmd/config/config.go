@@ -73,11 +73,11 @@ func initializeApplicationConfigs() {
 func initializeMySqlConfings() {
 	if MySqlCfg == nil {
 		MySqlCfg = &MySqlConfig{
-			User:     getEnv("MYSQL_USER", ""),
-			Password: getEnv("MYSQL_PASSWORD", ""),
-			Host:     getEnv("MYSQL_HOST", ""),
-			Port:     getEnv("MYSQL_PORT", ""),
-			Name:     getEnv("MYSQL_NAME", ""),
+			User:     getEnv("MYSQL_USER", "user"),
+			Password: getEnv("MYSQL_PASSWORD", "password"),
+			Host:     getEnv("MYSQL_HOST", "127.0.0.1"),
+			Port:     getEnv("MYSQL_PORT", "3307"),
+			Name:     getEnv("MYSQL_NAME", "mydatabase"),
 		}
 	}
 }
