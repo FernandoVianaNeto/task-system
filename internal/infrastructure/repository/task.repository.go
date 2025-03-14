@@ -16,15 +16,17 @@ func NewTaskRepository(db *gorm.DB) *TaskRepository {
 	return &TaskRepository{db: db}
 }
 
-func (r *TaskRepository) CreateTask(ctx context.Context, userUuid string, input entities.Task) error {
-	result := r.db.WithContext(ctx).Create(models.Task{
+func (r *TaskRepository) CreateTask(ctx context.Context, input entities.Task) error {
+	task := models.Task{
 		Id:       input.Id,
 		Uuid:     input.Uuid,
-		UserUuid: input.User.Uuid,
+		UserUuid: input.UserUuid,
 		Title:    input.Title,
 		Summary:  input.Summary,
 		Status:   input.Status,
-	})
+	}
+
+	result := r.db.WithContext(ctx).Create(&task)
 
 	if result.Error != nil {
 		return result.Error
@@ -33,14 +35,14 @@ func (r *TaskRepository) CreateTask(ctx context.Context, userUuid string, input 
 	return nil
 }
 
-// func (r *TaskRepository) GetTaskByUser(ctx context.Context, taskUuid string, userUuid string) (*entities.Task, error) {
-// 	result := r.db.WithContext(ctx).Create(&input)
+// func (r *TaskRepository) GetTaskByUser(ctx context.Context, taskUuid string, userUuid string) (*entities.Task, bool) {
+// 	result, err := r.db.WithContext(ctx).Get(taskUuid)
 
-// 	if result.Error != nil {
-// 		return result.Error
+// 	if err == false {
+// 		return &entities.Task{}, err
 // 	}
 
-// 	return nil
+// 	return result, err
 // }
 
 // func (r *TaskRepository) UpdateTaskByUser(ctx context.Context, userUuid string, input entities.Task) error {

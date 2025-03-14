@@ -1,11 +1,15 @@
 package entities
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Task struct {
 	Id        uint      `json:"id"`
 	Uuid      string    `json:"uuid"`
-	User      User      `json:"user"`
+	UserUuid  string    `json:"user_uuid"`
 	Title     string    `json:"title"`
 	Summary   string    `json:"summary"`
 	CreatedAt time.Time `json:"created_at"`
@@ -13,17 +17,17 @@ type Task struct {
 }
 
 func NewTask(
-	user User,
+	userUuid string,
 	title string,
 	summary string,
 ) *Task {
 	entity := &Task{
-		Id:      1,
-		Uuid:    "",
-		User:    user,
-		Title:   title,
-		Summary: summary,
-		Status:  "active",
+		Id:       1,
+		Uuid:     uuid.New().String(),
+		UserUuid: userUuid,
+		Title:    title,
+		Summary:  summary,
+		Status:   "active",
 	}
 	return entity
 }

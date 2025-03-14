@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"task-system/internal/domain/dto"
+	"task-system/internal/domain/entities"
 	domain_repository "task-system/internal/domain/repository"
 	domain_usecase "task-system/internal/domain/usecase"
 )
@@ -19,6 +20,14 @@ func NewCreateTaskUsecase(
 	}
 }
 
-func (a *CreateTaskUsecase) Execute(ctx context.Context, input dto.CreateTaskDto) error {
-	return nil
+func (c *CreateTaskUsecase) Execute(ctx context.Context, input dto.CreateTaskDto) error {
+	taskEntity := entities.NewTask(
+		input.UserUuid,
+		input.Title,
+		input.Summary,
+	)
+
+	err := c.TaskRepository.CreateTask(ctx, *taskEntity)
+
+	return err
 }
