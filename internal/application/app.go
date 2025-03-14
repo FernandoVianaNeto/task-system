@@ -8,8 +8,7 @@ import (
 	usecase "task-system/internal/application/usecases"
 	domain_repository "task-system/internal/domain/repository"
 	domain_usecase "task-system/internal/domain/usecase"
-	"task-system/internal/infrastructure/repository"
-	"task-system/internal/infrastructure/repository/models"
+	repository_task "task-system/internal/infrastructure/repository/task"
 	"task-system/internal/infrastructure/web"
 	mysql_pkg "task-system/pkg/mysql"
 
@@ -65,15 +64,40 @@ func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 }
 
 func NewRepositories(ctx context.Context, db *gorm.DB) Repositories {
-	taskRepository := repository.NewTaskRepository(db)
+	taskRepository := repository_task.NewTaskRepository(db)
 
 	return Repositories{
 		TaskRepository: taskRepository,
 	}
 }
 
+func NewTaskMigration(db *gorm.DB) error {
+	err := db.AutoMigrate(&repository_task.Task{})
+	if err != nil {
+		log.Fatal("Could not run migrations':", err)
+	}
+
+	return err
+}
+
+func NewUserMigration(db *gorm.DB) error {
+	err := db.AutoMigrate(&repository_task.Task{})
+	if err != nil {
+		log.Fatal("Could not run migrations':", err)
+	}
+
+	return err
+}
+
 func NewMigrations(db *gorm.DB) error {
-	err := db.AutoMigrate(&models.Task{})
+	err := NewUserMigration(db)
+
+	if err != nil {
+		log.Fatal("Could not run migrations':", err)
+	}
+
+	err = NewTaskMigration(db)
+
 	if err != nil {
 		log.Fatal("Could not run migrations':", err)
 	}

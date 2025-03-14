@@ -1,4 +1,4 @@
-package models
+package repository_task
 
 import (
 	"time"

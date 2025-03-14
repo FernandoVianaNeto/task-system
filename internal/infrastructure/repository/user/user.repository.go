@@ -1,32 +1,28 @@
-package repository
+package repository_user
 
 import (
 	"context"
 	"task-system/internal/domain/entities"
-	"task-system/internal/infrastructure/repository/models"
 
 	"gorm.io/gorm"
 )
 
-type TaskRepository struct {
+type UserRepository struct {
 	db *gorm.DB
 }
 
-func NewTaskRepository(db *gorm.DB) *TaskRepository {
-	return &TaskRepository{db: db}
+func NewUserRepository(db *gorm.DB) *UserRepository {
+	return &UserRepository{db: db}
 }
 
-func (r *TaskRepository) CreateTask(ctx context.Context, input entities.Task) error {
-	task := models.Task{
-		Id:       input.Id,
-		Uuid:     input.Uuid,
-		UserUuid: input.UserUuid,
-		Title:    input.Title,
-		Summary:  input.Summary,
-		Status:   input.Status,
+func (r *UserRepository) CreateUser(ctx context.Context, input entities.User) error {
+	user := User{
+		Uuid: input.Uuid,
+		Role: input.Role,
+		Name: input.Name,
 	}
 
-	result := r.db.WithContext(ctx).Create(&task)
+	result := r.db.WithContext(ctx).Create(&user)
 
 	if result.Error != nil {
 		return result.Error
