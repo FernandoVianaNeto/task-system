@@ -11,7 +11,7 @@ func (s *Server) CreateTaskHandler(ctx *gin.Context) {
 	var req dto.CreateTaskDto
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusUnprocessableEntity, gin.H{})
+		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": "Body not compatible with expected"})
 		return
 	}
 

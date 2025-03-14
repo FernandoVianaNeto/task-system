@@ -15,7 +15,6 @@ type Server struct {
 func NewServer(
 	ctx context.Context,
 	createTaskUsecase domain_usecase.CreateTaskUseCaseInterface,
-
 ) *Server {
 	router := gin.Default()
 

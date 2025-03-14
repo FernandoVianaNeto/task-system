@@ -3,11 +3,13 @@ package app
 import (
 	"context"
 	"fmt"
+	"log"
 	configs "task-system/cmd/config"
 	usecase "task-system/internal/application/usecases"
 	domain_repository "task-system/internal/domain/repository"
 	domain_usecase "task-system/internal/domain/usecase"
 	"task-system/internal/infrastructure/repository"
+	"task-system/internal/infrastructure/repository/models"
 	"task-system/internal/infrastructure/web"
 	mysql_pkg "task-system/pkg/mysql"
 
@@ -39,6 +41,12 @@ func NewApplication() *web.Server {
 		fmt.Println(err, "Failed to connect to database")
 	}
 
+	err = NewMigrations(db)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	repositories := NewRepositories(ctx, db)
 
 	usecases := NewUsecases(ctx, repositories)
@@ -62,4 +70,13 @@ func NewRepositories(ctx context.Context, db *gorm.DB) Repositories {
 	return Repositories{
 		TaskRepository: taskRepository,
 	}
+}
+
+func NewMigrations(db *gorm.DB) error {
+	err := db.AutoMigrate(&models.Task{})
+	if err != nil {
+		log.Fatal("Could not run migrations':", err)
+	}
+
+	return err
 }

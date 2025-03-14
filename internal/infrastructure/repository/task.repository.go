@@ -17,14 +17,13 @@ func NewTaskRepository(db *gorm.DB) *TaskRepository {
 }
 
 func (r *TaskRepository) CreateTask(ctx context.Context, userUuid string, input entities.Task) error {
-	result := r.db.WithContext(ctx).Create(models.TaskModel{
-		Id:        input.Id,
-		Uuid:      input.Uuid,
-		User:      input.User,
-		Title:     input.Title,
-		Summary:   input.Summary,
-		CreatedAt: input.CreatedAt,
-		Status:    input.Status,
+	result := r.db.WithContext(ctx).Create(models.Task{
+		Id:       input.Id,
+		Uuid:     input.Uuid,
+		UserUuid: input.User.Uuid,
+		Title:    input.Title,
+		Summary:  input.Summary,
+		Status:   input.Status,
 	})
 
 	if result.Error != nil {
