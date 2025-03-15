@@ -16,7 +16,7 @@ func (s *Server) GetUserHandler(ctx *gin.Context) {
 		return
 	}
 
-	response, err := s.GetUserUsecase.Execute(ctx, dto.GetUserDto{Uuid: req.Uuid})
+	response, err := s.GetUserUsecase.Execute(ctx, dto.GetUserByUuidDto{Uuid: req.Uuid})
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})

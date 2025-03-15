@@ -14,7 +14,8 @@ var (
 )
 
 type ApplicationConfig struct {
-	AppPort int
+	AppPort            int
+	PasswordSecretHash string
 }
 
 type MySqlConfig struct {
@@ -65,7 +66,8 @@ func getEnvAsInt(name string, defaultVal int) int {
 func initializeApplicationConfigs() {
 	if ApplicationCfg == nil {
 		ApplicationCfg = &ApplicationConfig{
-			AppPort: getEnvAsInt("APP_PORT", 80),
+			AppPort:            getEnvAsInt("APP_PORT", 80),
+			PasswordSecretHash: getEnv("PASSWORD_SECRET_HASH", ""),
 		}
 	}
 }

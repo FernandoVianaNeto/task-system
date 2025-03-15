@@ -20,5 +20,12 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 		}
 	}
 
+	{
+		auth := engine.Group("/auth")
+		{
+			auth.POST("/", server.AuthHandler)
+		}
+	}
+
 	return engine
 }

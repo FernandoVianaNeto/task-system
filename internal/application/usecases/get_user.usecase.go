@@ -20,8 +20,8 @@ func NewGetUserUsecase(
 	}
 }
 
-func (c *GetUserUsecase) Execute(ctx context.Context, input dto.GetUserDto) (*entities.User, error) {
-	entity, err := c.UserRepository.GetUser(ctx, input)
+func (c *GetUserUsecase) Execute(ctx context.Context, input dto.GetUserByUuidDto) (*entities.User, error) {
+	entity, err := c.UserRepository.GetUserByUuid(ctx, input)
 
 	return entity, err
 }

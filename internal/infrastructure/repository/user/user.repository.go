@@ -2,6 +2,7 @@ package repository_user
 
 import (
 	"context"
+	"fmt"
 	"task-system/internal/domain/dto"
 	"task-system/internal/domain/entities"
 
@@ -18,9 +19,11 @@ func NewUserRepository(db *gorm.DB) *UserRepository {
 
 func (r *UserRepository) CreateUser(ctx context.Context, input entities.User) error {
 	user := User{
-		Uuid: input.Uuid,
-		Role: input.Role,
-		Name: input.Name,
+		Uuid:     input.Uuid,
+		Role:     input.Role,
+		Name:     input.Name,
+		Password: input.Password,
+		Email:    input.Email,
 	}
 
 	result := r.db.WithContext(ctx).Create(&user)
@@ -32,7 +35,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, input entities.User) er
 	return nil
 }
 
-func (r *UserRepository) GetUser(ctx context.Context, input dto.GetUserDto) (*entities.User, error) {
+func (r *UserRepository) GetUserByUuid(ctx context.Context, input dto.GetUserByUuidDto) (*entities.User, error) {
 	var user entities.User
 
 	result := r.db.WithContext(ctx).Where("uuid = ?", input.Uuid).First(&user)
@@ -47,8 +50,10 @@ func (r *UserRepository) GetUser(ctx context.Context, input dto.GetUserDto) (*en
 	return &user, result.Error
 }
 
-func (r *UserRepository) GetUserByName(ctx context.Context, input dto.GetUserDto) (*entities.User, error) {
+func (r *UserRepository) GetUserByEmail(ctx context.Context, input dto.GetUserByEmailDto) (*entities.User, error) {
 	var user entities.User
+
+	fmt.Println("CHEGUEI AQUI", input)
 
 	result := r.db.WithContext(ctx).Where("email = ?", input.Email).First(&user)
 

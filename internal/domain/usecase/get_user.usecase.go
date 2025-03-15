@@ -9,5 +9,5 @@ import (
 //go:generate mockgen -source $GOFILE -package $GOPACKAGE -destination $ROOT_DIR/test/mocks/$GOPACKAGE/mock_$GOFILE
 
 type GetUserUsecaseInterface interface {
-	Execute(ctx context.Context, input dto.GetUserDto) (*entities.User, error)
+	Execute(ctx context.Context, input dto.GetUserByUuidDto) (*entities.User, error)
 }
