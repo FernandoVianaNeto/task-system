@@ -12,5 +12,12 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 		}
 	}
 
+	{
+		task := engine.Group("/user")
+		{
+			task.POST("/", server.CreateUserHandler)
+		}
+	}
+
 	return engine
 }

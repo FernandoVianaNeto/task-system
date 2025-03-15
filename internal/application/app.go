@@ -9,6 +9,7 @@ import (
 	domain_repository "task-system/internal/domain/repository"
 	domain_usecase "task-system/internal/domain/usecase"
 	repository_task "task-system/internal/infrastructure/repository/task"
+	repository_user "task-system/internal/infrastructure/repository/user"
 	"task-system/internal/infrastructure/web"
 	mysql_pkg "task-system/pkg/mysql"
 
@@ -17,10 +18,12 @@ import (
 
 type Usecases struct {
 	CreateTaskUsecase domain_usecase.CreateTaskUseCaseInterface
+	CreateUserUsecase domain_usecase.CreateUserUsecaseInterface
 }
 
 type Repositories struct {
 	TaskRepository domain_repository.TaskRepositoryInterface
+	UserRepository domain_repository.UserRepositoryInterface
 }
 
 func NewApplication() *web.Server {
@@ -50,24 +53,28 @@ func NewApplication() *web.Server {
 
 	usecases := NewUsecases(ctx, repositories)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase)
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase)
 
 	return srv
 }
 
 func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 	createTaskUsecase := usecase.NewCreateTaskUsecase(repositories.TaskRepository)
+	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository)
 
 	return Usecases{
 		CreateTaskUsecase: createTaskUsecase,
+		CreateUserUsecase: createUserUsecase,
 	}
 }
 
 func NewRepositories(ctx context.Context, db *gorm.DB) Repositories {
 	taskRepository := repository_task.NewTaskRepository(db)
+	userRepository := repository_user.NewUserRepository(db)
 
 	return Repositories{
 		TaskRepository: taskRepository,
+		UserRepository: userRepository,
 	}
 }
 
@@ -81,7 +88,7 @@ func NewTaskMigration(db *gorm.DB) error {
 }
 
 func NewUserMigration(db *gorm.DB) error {
-	err := db.AutoMigrate(&repository_task.Task{})
+	err := db.AutoMigrate(&repository_user.User{})
 	if err != nil {
 		log.Fatal("Could not run migrations':", err)
 	}
