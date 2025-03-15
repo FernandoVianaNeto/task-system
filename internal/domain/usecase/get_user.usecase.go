@@ -1,4 +1,4 @@
-package domain_repository
+package domain_usecase
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 
 //go:generate mockgen -source $GOFILE -package $GOPACKAGE -destination $ROOT_DIR/test/mocks/$GOPACKAGE/mock_$GOFILE
 
-type UserRepositoryInterface interface {
-	CreateUser(ctx context.Context, input entities.User) error
-	GetUser(ctx context.Context, input dto.GetUserDto) (*entities.User, error)
+type GetUserUsecaseInterface interface {
+	Execute(ctx context.Context, input dto.GetUserDto) (*entities.User, error)
 }

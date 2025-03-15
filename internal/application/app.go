@@ -19,6 +19,7 @@ import (
 type Usecases struct {
 	CreateTaskUsecase domain_usecase.CreateTaskUseCaseInterface
 	CreateUserUsecase domain_usecase.CreateUserUsecaseInterface
+	GetUserUsecase    domain_usecase.GetUserUsecaseInterface
 }
 
 type Repositories struct {
@@ -53,7 +54,7 @@ func NewApplication() *web.Server {
 
 	usecases := NewUsecases(ctx, repositories)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase)
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase)
 
 	return srv
 }
@@ -61,10 +62,12 @@ func NewApplication() *web.Server {
 func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 	createTaskUsecase := usecase.NewCreateTaskUsecase(repositories.TaskRepository)
 	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository)
+	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
 
 	return Usecases{
 		CreateTaskUsecase: createTaskUsecase,
 		CreateUserUsecase: createUserUsecase,
+		GetUserUsecase:    getUserUsecase,
 	}
 }
 

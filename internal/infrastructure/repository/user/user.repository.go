@@ -2,6 +2,7 @@ package repository_user
 
 import (
 	"context"
+	"task-system/internal/domain/dto"
 	"task-system/internal/domain/entities"
 
 	"gorm.io/gorm"
@@ -31,28 +32,17 @@ func (r *UserRepository) CreateUser(ctx context.Context, input entities.User) er
 	return nil
 }
 
-// func (r *TaskRepository) GetTaskByUser(ctx context.Context, taskUuid string, userUuid string) (*entities.Task, bool) {
-// 	result, err := r.db.WithContext(ctx).Get(taskUuid)
+func (r *UserRepository) GetUser(ctx context.Context, input dto.GetUserDto) (*entities.User, error) {
+	var user entities.User
 
-// 	if err == false {
-// 		return &entities.Task{}, err
-// 	}
+	result := r.db.WithContext(ctx).Where("uuid = ?", input.Uuid).First(&user)
 
-// 	return result, err
-// }
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return &entities.User{}, nil
+		}
+		return nil, result.Error
+	}
 
-// func (r *TaskRepository) UpdateTaskByUser(ctx context.Context, userUuid string, input entities.Task) error {
-// 	result := r.db.WithContext(ctx).
-// 		Model(&models.PlanExtension{}).
-// 		Where("freight_id = ? AND disabled = ?", freightId, false).
-// 		Update("disabled", true).
-// 		Update("disable_reason", disableReason)
-
-// 	if result.Error != nil {
-// 		return result.Error
-// 	}
-
-// 	log.Println(fmt.Sprintf("Extensão desativada para o frete %d", freightId))
-
-// 	return nil
-// }
+	return &user, result.Error
+}
