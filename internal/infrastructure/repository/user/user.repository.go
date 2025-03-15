@@ -46,3 +46,18 @@ func (r *UserRepository) GetUser(ctx context.Context, input dto.GetUserDto) (*en
 
 	return &user, result.Error
 }
+
+func (r *UserRepository) GetUserByName(ctx context.Context, input dto.GetUserDto) (*entities.User, error) {
+	var user entities.User
+
+	result := r.db.WithContext(ctx).Where("email = ?", input.Email).First(&user)
+
+	if result.Error != nil {
+		if result.Error == gorm.ErrRecordNotFound {
+			return &entities.User{}, nil
+		}
+		return nil, result.Error
+	}
+
+	return &user, result.Error
+}

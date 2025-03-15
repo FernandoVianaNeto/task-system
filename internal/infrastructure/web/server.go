@@ -12,6 +12,7 @@ type Server struct {
 	CreateTaskUsecase domain_usecase.CreateTaskUseCaseInterface
 	CreateUserUsecase domain_usecase.CreateUserUsecaseInterface
 	GetUserUsecase    domain_usecase.GetUserUsecaseInterface
+	AuthUsecase       domain_usecase.AuthUsecaseInterface
 }
 
 func NewServer(
@@ -19,6 +20,7 @@ func NewServer(
 	createTaskUsecase domain_usecase.CreateTaskUseCaseInterface,
 	createUserUsecase domain_usecase.CreateUserUsecaseInterface,
 	getUserUsecase domain_usecase.GetUserUsecaseInterface,
+	authUsecase domain_usecase.AuthUsecaseInterface,
 ) *Server {
 	router := gin.Default()
 
@@ -26,6 +28,7 @@ func NewServer(
 		CreateTaskUsecase: createTaskUsecase,
 		CreateUserUsecase: createUserUsecase,
 		GetUserUsecase:    getUserUsecase,
+		AuthUsecase:       authUsecase,
 	}
 	server.router = Routes(router, server)
 

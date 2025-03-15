@@ -20,6 +20,7 @@ type Usecases struct {
 	CreateTaskUsecase domain_usecase.CreateTaskUseCaseInterface
 	CreateUserUsecase domain_usecase.CreateUserUsecaseInterface
 	GetUserUsecase    domain_usecase.GetUserUsecaseInterface
+	AuthUsecase       domain_usecase.AuthUsecaseInterface
 }
 
 type Repositories struct {
@@ -54,7 +55,7 @@ func NewApplication() *web.Server {
 
 	usecases := NewUsecases(ctx, repositories)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase)
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase)
 
 	return srv
 }
@@ -63,11 +64,13 @@ func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 	createTaskUsecase := usecase.NewCreateTaskUsecase(repositories.TaskRepository)
 	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository)
 	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
+	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
 
 	return Usecases{
 		CreateTaskUsecase: createTaskUsecase,
 		CreateUserUsecase: createUserUsecase,
 		GetUserUsecase:    getUserUsecase,
+		AuthUsecase:       authUsecase,
 	}
 }
 
@@ -103,13 +106,13 @@ func NewMigrations(db *gorm.DB) error {
 	err := NewUserMigration(db)
 
 	if err != nil {
-		log.Fatal("Could not run migrations':", err)
+		log.Fatal("Could not run user migrations':", err)
 	}
 
 	err = NewTaskMigration(db)
 
 	if err != nil {
-		log.Fatal("Could not run migrations':", err)
+		log.Fatal("Could not run task migrations':", err)
 	}
 
 	return err

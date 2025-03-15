@@ -1,5 +1,6 @@
 package dto
 
 type GetUserDto struct {
-	Uuid string `uri:"uuid"`
+	Uuid  string `json:"uuid"`
+	Email string `json:"email"`
 }
