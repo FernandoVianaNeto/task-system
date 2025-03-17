@@ -11,6 +11,7 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 		task := engine.Group("/task", middleware.JwtAuthMiddleware())
 		{
 			task.POST("/", server.CreateTaskHandler)
+			task.GET("/", server.ListTasksHandler)
 		}
 	}
 

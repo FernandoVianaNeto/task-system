@@ -21,6 +21,7 @@ type Usecases struct {
 	CreateUserUsecase domain_usecase.CreateUserUsecaseInterface
 	GetUserUsecase    domain_usecase.GetUserUsecaseInterface
 	AuthUsecase       domain_usecase.AuthUsecaseInterface
+	ListTaskUsecase   domain_usecase.ListTaskUsecaseInterface
 }
 
 type Repositories struct {
@@ -55,7 +56,7 @@ func NewApplication() *web.Server {
 
 	usecases := NewUsecases(ctx, repositories)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase)
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase)
 
 	return srv
 }
@@ -65,12 +66,14 @@ func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository)
 	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
 	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
+	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository)
 
 	return Usecases{
 		CreateTaskUsecase: createTaskUsecase,
 		CreateUserUsecase: createUserUsecase,
 		GetUserUsecase:    getUserUsecase,
 		AuthUsecase:       authUsecase,
+		ListTaskUsecase:   listTaskUsecase,
 	}
 }
 

@@ -2,7 +2,6 @@ package repository_user
 
 import (
 	"context"
-	"fmt"
 	"task-system/internal/domain/dto"
 	"task-system/internal/domain/entities"
 
@@ -52,8 +51,6 @@ func (r *UserRepository) GetUserByUuid(ctx context.Context, input dto.GetUserByU
 
 func (r *UserRepository) GetUserByEmail(ctx context.Context, input dto.GetUserByEmailDto) (*entities.User, error) {
 	var user entities.User
-
-	fmt.Println("CHEGUEI AQUI", input)
 
 	result := r.db.WithContext(ctx).Where("email = ?", input.Email).First(&user)
 
