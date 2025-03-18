@@ -38,6 +38,7 @@ func NewServer(
 		AuthUsecase:             authUsecase,
 		ListTaskUsecase:         listTaskUsecase,
 		UpdateTaskStatusUsecase: updateTaskStatusUsecase,
+		KafkaProducer:           kafkaProducer,
 	}
 	server.router = Routes(router, server)
 

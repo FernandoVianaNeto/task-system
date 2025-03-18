@@ -2,6 +2,7 @@ package workers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	configs "task-system/cmd/config"
 	kafka_pkg "task-system/pkg/kafka"
@@ -10,11 +11,16 @@ import (
 func StartTaskStatusUpdatedConsumer(ctx context.Context) {
 	consumer := kafka_pkg.NewKafkaConsumer(configs.KafkaCfg.TaskStatusUpdatedTopic)
 
-	msg, err := consumer.ReadMessage(ctx)
+	fmt.Println("Starting Kafka Consumer...")
 
-	if err != nil {
-		log.Fatal(err)
+	for {
+		msg, err := consumer.ReadMessage(ctx)
+
+		if err != nil {
+			log.Println("Error reading message:", err)
+			continue
+		}
+
+		TaskUpdatedStatusHandler(msg)
 	}
-
-	TaskUpdatedStatusHandler(msg)
 }

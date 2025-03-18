@@ -8,8 +8,9 @@ import (
 
 func NewKafkaConsumer(topic string) *kafka.Reader {
 	reader := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{configs.KafkaCfg.BrokersHost},
-		Topic:   topic,
+		Brokers:     []string{configs.KafkaCfg.BrokersHost},
+		Topic:       topic,
+		StartOffset: -1,
 	})
 
 	return reader

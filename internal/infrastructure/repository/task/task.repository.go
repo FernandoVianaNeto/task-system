@@ -72,7 +72,7 @@ func (r *TaskRepository) ListTask(ctx context.Context, input dto.ListTaskDto) ([
 
 func (r *TaskRepository) UpdateTaskStatus(ctx context.Context, input dto.UpdateTaskStatusDto) error {
 	result := r.db.WithContext(ctx).
-		Model(&Task{}).
+		Model(&entities.Task{}).
 		Where("uuid = ? AND owner = ?", input.TaskUuid, input.UserUuid).
 		Update("status", input.TaskStatus)
 

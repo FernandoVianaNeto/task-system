@@ -22,18 +22,7 @@ func (s *Server) CreateUserHandler(ctx *gin.Context) {
 		return
 	}
 
-	// headers := []kafka.Header{
-	// 	{Key: "EventType", Value: []byte("task-status-updated")},
-	// }
 
-	// err = s.KafkaProducer.WriteMessages(nil, kafka.Message{
-	// 	Key:     []byte(task.TaskUuid),
-	// 	Headers: headers,
-	// 	Value:   messageBytes,
-	// })
-	// if err != nil {
-	// 	return err
-	// }
 
 	ctx.Status(http.StatusOK)
 }

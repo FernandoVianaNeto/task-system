@@ -93,7 +93,7 @@ func initializeMySqlConfings() {
 func initializeKafkaConfigs() {
 	if KafkaCfg == nil {
 		KafkaCfg = &KafkaConfig{
-			BrokersHost:            getEnv("KAFKA_BROKER_HOSTS", ""),
+			BrokersHost:            getEnv("KAFKA_BROKER_HOSTS", "localhost:9092"),
 			TaskStatusUpdatedTopic: getEnv("TASK_STATUS_UPDATED_TOPIC", ""),
 		}
 	}

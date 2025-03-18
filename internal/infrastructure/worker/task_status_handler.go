@@ -17,19 +17,18 @@ type TaskNotification struct {
 }
 
 func TaskUpdatedStatusHandler(msg kafka.Message) {
-	for {
-		var task TaskNotification
-		if err := json.Unmarshal(msg.Value, &task); err != nil {
-			log.Println("Error decoding task update:", err)
-			continue
-		}
+	var task TaskNotification
 
-		headersMap := make(map[string]string)
-		for _, header := range msg.Headers {
-			headersMap[header.Key] = string(header.Value)
-		}
-
-		fmt.Printf("The tech performed the task %s (ID: %s) on %s. Status: %s\n",
-			task.TaskTitle, task.TaskUuid, task.Timestamp, task.NewStatus)
+	if err := json.Unmarshal(msg.Value, &task); err != nil {
+		log.Println("Error decoding task update:", err)
+		return
 	}
+
+	headersMap := make(map[string]string)
+	for _, header := range msg.Headers {
+		headersMap[header.Key] = string(header.Value)
+	}
+
+	fmt.Printf("The tech performed the task %s (ID: %s) on %s. Status: %s\n",
+		task.TaskTitle, task.TaskUuid, task.Timestamp, task.NewStatus)
 }

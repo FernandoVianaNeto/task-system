@@ -7,6 +7,7 @@ import (
 )
 
 func Routes(engine *gin.Engine, server *Server) *gin.Engine {
+	
 	{
 		task := engine.Group("/task", middleware.JwtAuthMiddleware())
 		{
