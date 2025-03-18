@@ -24,26 +24,31 @@ func JwtAdminAuthMiddleware() gin.HandlerFunc {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Token not provided"})
+			c.Abort()
 			return
 		}
 
 		tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
 
-		token, err := jwt.ParseWithClaims(tokenString, &JwtClaims{}, func(token *jwt.Token) (interface{}, error) {
+		token, err := jwt.ParseWithClaims(tokenString, &JwtAdminClaims{}, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("unexpected assign method: %v", token.Header["alg"])
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
 			return secretKey, nil
 		})
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Invalid token"})
+			c.Abort()
 			return
 		}
 
-		if claims, ok := token.Claims.(*JwtClaims); ok && token.Valid {
+		if claims, ok := token.Claims.(*JwtAdminClaims); ok && token.Valid {
 			if claims.Role != "admin" {
+				fmt.Println("CAI AQUI E O CARA N É ADMIN")
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Invalid token"})
+				c.Abort()
+				return
 			}
 
 			c.Set("user_email", claims.Email)
@@ -52,6 +57,7 @@ func JwtAdminAuthMiddleware() gin.HandlerFunc {
 			c.Next()
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Invalid token"})
+			c.Abort()
 		}
 	}
 }
