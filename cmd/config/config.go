@@ -45,6 +45,10 @@ func InitializeConfigs() {
 	initializeKafkaConfigs()
 }
 
+func InitializeWorkerConfig() {
+	initializeKafkaConfigs()
+}
+
 func getEnv(key string, defaultVal string) string {
 	value, exists := os.LookupEnv(key)
 

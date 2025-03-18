@@ -10,6 +10,7 @@ import (
 
 type CreateTaskUsecase struct {
 	TaskRepository domain_repository.TaskRepositoryInterface
+	Producer *kafkaProducer
 }
 
 func NewCreateTaskUsecase(
