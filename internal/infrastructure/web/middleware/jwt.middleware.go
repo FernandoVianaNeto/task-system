@@ -11,8 +11,9 @@ import (
 )
 
 type JwtClaims struct {
-	Email string `json:"email"`
-	Role  string `json:"role"`
+	Email string `json:"user_email"`
+	Role  string `json:"user_role"`
+	Uuid  string `json:"user_uuid"`
 	jwt.RegisteredClaims
 }
 
@@ -42,7 +43,8 @@ func JwtAuthMiddleware() gin.HandlerFunc {
 
 		if claims, ok := token.Claims.(*JwtClaims); ok && token.Valid {
 			c.Set("user_email", claims.Email)
-			c.Set("user_role", claims.Email)
+			c.Set("user_role", claims.Role)
+			c.Set("user_uuid", claims.Uuid)
 			c.Next()
 		} else {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Invalid token"})

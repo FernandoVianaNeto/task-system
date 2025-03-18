@@ -16,10 +16,10 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 	}
 
 	{
-		user := engine.Group("/user", middleware.JwtAuthMiddleware())
+		user := engine.Group("/user")
 		{
 			user.POST("/", server.CreateUserHandler)
-			user.GET("/:uuid", server.GetUserHandler)
+			user.GET("/:uuid", server.GetUserHandler, middleware.JwtAuthMiddleware())
 		}
 	}
 

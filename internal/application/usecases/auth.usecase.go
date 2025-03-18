@@ -39,7 +39,7 @@ func (a *AuthUsecase) Execute(ctx context.Context, input dto.AuthDto) (domain_re
 		return domain_response.AuthResponse{}, err
 	}
 
-	token, err := generateToken(input.Email, user.Role)
+	token, err := generateToken(input.Email, user.Role, user.Uuid)
 
 	if err != nil {
 		return domain_response.AuthResponse{}, err
@@ -48,11 +48,12 @@ func (a *AuthUsecase) Execute(ctx context.Context, input dto.AuthDto) (domain_re
 	return domain_response.AuthResponse{Token: token}, nil
 }
 
-func generateToken(email string, role string) (string, error) {
+func generateToken(email string, role string, userUuid string) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"email": email,
-		"role": role,
-		"exp":   time.Now().Add(time.Hour * 1).Unix(),
+		"user_email": email,
+		"user_role":  role,
+		"user_uuid":  userUuid,
+		"exp":        time.Now().Add(time.Hour * 1).Unix(),
 	})
 
 	return token.SignedString([]byte(configs.ApplicationCfg.PasswordSecretHash))

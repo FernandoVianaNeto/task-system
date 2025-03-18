@@ -2,6 +2,7 @@ package repository_task
 
 import (
 	"context"
+	"fmt"
 	"task-system/internal/domain/dto"
 	"task-system/internal/domain/entities"
 
@@ -38,14 +39,30 @@ func (r *TaskRepository) ListTask(ctx context.Context, input dto.ListTaskDto) ([
 	var entity []*entities.Task
 	var result *gorm.DB
 
-	if input.Uuid != nil {
-		result = r.db.WithContext(ctx).Where("uuid = ?", input.Uuid).Find(&entity)
-	} else if input.Owner != nil {
-		result = r.db.WithContext(ctx).Where("owner = ?", input.Owner).Find(&entity)
-	} else {
-		result = r.db.WithContext(ctx).Find(&entity)
+	query := r.db.WithContext(ctx)
 
+	fmt.Println("INPUT", input)
+
+	if input.Role == "developer" {
+		if input.Uuid != nil {
+			query = query.Where("uuid = ? AND owner = ?", input.Uuid, input.UserUuid)
+		}
+		fmt.Println("INPUT", input)
+
+		query = query.Where("owner = ?", input.UserUuid)
 	}
+
+	if input.Role == "admin" {
+		if input.Uuid != nil {
+			query = query.Where("uuid = ?", input.Uuid)
+		}
+
+		if input.Owner != nil {
+			query = query.Where("owner = ?", input.Owner)
+		}
+	}
+
+	result = query.Find(&entity)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {

@@ -10,13 +10,16 @@ import (
 
 type ListTaskUsecase struct {
 	TaskRepository domain_repository.TaskRepositoryInterface
+	UserRepository domain_repository.UserRepositoryInterface
 }
 
 func NewListTaskUsecase(
-	repository domain_repository.TaskRepositoryInterface,
+	taskRepository domain_repository.TaskRepositoryInterface,
+	userRepository domain_repository.UserRepositoryInterface,
 ) domain_usecase.ListTaskUsecaseInterface {
 	return &ListTaskUsecase{
-		TaskRepository: repository,
+		TaskRepository: taskRepository,
+		UserRepository: userRepository,
 	}
 }
 

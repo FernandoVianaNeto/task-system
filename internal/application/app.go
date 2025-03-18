@@ -66,7 +66,7 @@ func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository)
 	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
 	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
-	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository)
+	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository, repositories.UserRepository)
 
 	return Usecases{
 		CreateTaskUsecase: createTaskUsecase,
