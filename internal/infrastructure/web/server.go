@@ -5,6 +5,7 @@ import (
 	domain_usecase "task-system/internal/domain/usecase"
 
 	"github.com/gin-gonic/gin"
+	"github.com/segmentio/kafka-go"
 )
 
 type Server struct {
@@ -14,6 +15,7 @@ type Server struct {
 	GetUserUsecase    domain_usecase.GetUserUsecaseInterface
 	AuthUsecase       domain_usecase.AuthUsecaseInterface
 	ListTaskUsecase   domain_usecase.ListTaskUsecaseInterface
+	KafkaProducer     *kafka.Writer
 }
 
 func NewServer(
@@ -23,6 +25,7 @@ func NewServer(
 	getUserUsecase domain_usecase.GetUserUsecaseInterface,
 	authUsecase domain_usecase.AuthUsecaseInterface,
 	listTaskUsecase domain_usecase.ListTaskUsecaseInterface,
+	kafkaProducer *kafka.Writer,
 ) *Server {
 	router := gin.Default()
 

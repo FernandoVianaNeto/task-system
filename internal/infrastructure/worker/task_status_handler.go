@@ -12,7 +12,7 @@ type TaskNotification struct {
 	UserUuid  string `json:"user_uuid"`
 	NewStatus string `json:"new_status"`
 	TaskUuid  string `json:"task_uuid"`
-	TaskTitle string `json:task_title`
+	TaskTitle string `json:"task_title"`
 	Timestamp string `json:"timestamp"`
 }
 

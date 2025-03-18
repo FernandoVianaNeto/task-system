@@ -1,4 +1,4 @@
-package kafka
+package kafka_pkg
 
 import (
 	configs "task-system/cmd/config"

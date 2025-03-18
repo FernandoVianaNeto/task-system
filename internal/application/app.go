@@ -11,6 +11,7 @@ import (
 	repository_task "task-system/internal/infrastructure/repository/task"
 	repository_user "task-system/internal/infrastructure/repository/user"
 	"task-system/internal/infrastructure/web"
+	kafka_pkg "task-system/pkg/kafka"
 	mysql_pkg "task-system/pkg/mysql"
 
 	"gorm.io/gorm"
@@ -56,7 +57,9 @@ func NewApplication() *web.Server {
 
 	usecases := NewUsecases(ctx, repositories)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase)
+	kafkaProducer := kafka_pkg.NewProducer(configs.KafkaCfg.TaskStatusUpdatedTopic)
+
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase, kafkaProducer)
 
 	return srv
 }

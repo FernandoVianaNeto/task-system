@@ -2,7 +2,6 @@ package repository_task
 
 import (
 	"context"
-	"fmt"
 	"task-system/internal/domain/dto"
 	"task-system/internal/domain/entities"
 
@@ -41,13 +40,10 @@ func (r *TaskRepository) ListTask(ctx context.Context, input dto.ListTaskDto) ([
 
 	query := r.db.WithContext(ctx)
 
-	fmt.Println("INPUT", input)
-
 	if input.Role == "developer" {
 		if input.Uuid != nil {
 			query = query.Where("uuid = ? AND owner = ?", input.Uuid, input.UserUuid)
 		}
-		fmt.Println("INPUT", input)
 
 		query = query.Where("owner = ?", input.UserUuid)
 	}

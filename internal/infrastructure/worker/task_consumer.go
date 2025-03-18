@@ -4,11 +4,11 @@ import (
 	"context"
 	"log"
 	configs "task-system/cmd/config"
-	"task-system/pkg/kafka"
+	kafka_pkg "task-system/pkg/kafka"
 )
 
 func StartTaskStatusUpdatedConsumer(ctx context.Context) {
-	consumer := kafka.NewKafkaConsumer(configs.KafkaCfg.TaskStatusUpdatedTopic)
+	consumer := kafka_pkg.NewKafkaConsumer(configs.KafkaCfg.TaskStatusUpdatedTopic)
 
 	msg, err := consumer.ReadMessage(ctx)
 
