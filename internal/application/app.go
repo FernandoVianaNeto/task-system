@@ -8,8 +8,8 @@ import (
 	usecase "task-system/internal/application/usecases"
 	domain_repository "task-system/internal/domain/repository"
 	domain_usecase "task-system/internal/domain/usecase"
-	"task-system/internal/infrastructure/repository"
-	"task-system/internal/infrastructure/repository/models"
+	repository_task "task-system/internal/infrastructure/repository/task"
+	repository_user "task-system/internal/infrastructure/repository/user"
 	"task-system/internal/infrastructure/web"
 	mysql_pkg "task-system/pkg/mysql"
 
@@ -18,10 +18,15 @@ import (
 
 type Usecases struct {
 	CreateTaskUsecase domain_usecase.CreateTaskUseCaseInterface
+	CreateUserUsecase domain_usecase.CreateUserUsecaseInterface
+	GetUserUsecase    domain_usecase.GetUserUsecaseInterface
+	AuthUsecase       domain_usecase.AuthUsecaseInterface
+	ListTaskUsecase   domain_usecase.ListTaskUsecaseInterface
 }
 
 type Repositories struct {
 	TaskRepository domain_repository.TaskRepositoryInterface
+	UserRepository domain_repository.UserRepositoryInterface
 }
 
 func NewApplication() *web.Server {
@@ -51,31 +56,66 @@ func NewApplication() *web.Server {
 
 	usecases := NewUsecases(ctx, repositories)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase)
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase)
 
 	return srv
 }
 
 func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 	createTaskUsecase := usecase.NewCreateTaskUsecase(repositories.TaskRepository)
+	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository)
+	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
+	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
+	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository, repositories.UserRepository)
 
 	return Usecases{
 		CreateTaskUsecase: createTaskUsecase,
+		CreateUserUsecase: createUserUsecase,
+		GetUserUsecase:    getUserUsecase,
+		AuthUsecase:       authUsecase,
+		ListTaskUsecase:   listTaskUsecase,
 	}
 }
 
 func NewRepositories(ctx context.Context, db *gorm.DB) Repositories {
-	taskRepository := repository.NewTaskRepository(db)
+	taskRepository := repository_task.NewTaskRepository(db)
+	userRepository := repository_user.NewUserRepository(db)
 
 	return Repositories{
 		TaskRepository: taskRepository,
+		UserRepository: userRepository,
 	}
 }
 
-func NewMigrations(db *gorm.DB) error {
-	err := db.AutoMigrate(&models.Task{})
+func NewTaskMigration(db *gorm.DB) error {
+	err := db.AutoMigrate(&repository_task.Task{})
 	if err != nil {
 		log.Fatal("Could not run migrations':", err)
+	}
+
+	return err
+}
+
+func NewUserMigration(db *gorm.DB) error {
+	err := db.AutoMigrate(&repository_user.User{})
+	if err != nil {
+		log.Fatal("Could not run migrations':", err)
+	}
+
+	return err
+}
+
+func NewMigrations(db *gorm.DB) error {
+	err := NewUserMigration(db)
+
+	if err != nil {
+		log.Fatal("Could not run user migrations':", err)
+	}
+
+	err = NewTaskMigration(db)
+
+	if err != nil {
+		log.Fatal("Could not run task migrations':", err)
 	}
 
 	return err
