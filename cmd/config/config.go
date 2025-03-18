@@ -11,6 +11,7 @@ import (
 var (
 	ApplicationCfg *ApplicationConfig
 	MySqlCfg       *MySqlConfig
+	KafkaCfg       *KafkaConfig
 )
 
 type ApplicationConfig struct {
@@ -26,10 +27,10 @@ type MySqlConfig struct {
 	Name     string
 }
 
-// type KafkaConfig struct {
-// 	BrokersHost           string
-// 	PushNotificationTopic string
-// } // TODO LATER
+type KafkaConfig struct {
+	BrokersHost            string
+	TaskStatusUpdatedTopic string
+}
 
 func initialize() {
 	if err := godotenv.Load(); err != nil {
@@ -41,6 +42,7 @@ func InitializeConfigs() {
 	initialize()
 	initializeApplicationConfigs()
 	initializeMySqlConfings()
+	initializeKafkaConfigs()
 }
 
 func getEnv(key string, defaultVal string) string {
@@ -84,10 +86,11 @@ func initializeMySqlConfings() {
 	}
 }
 
-// func initializeKafkaConfigs() {
-// 	if KafkaCfg == nil {
-// 		KafkaCfg = &KafkaConfig{
-// 			BrokersHost: getEnv("KAFKA_BROKER_HOSTS", ""),
-// 		}
-// 	}
-// } // TODO LATER
+func initializeKafkaConfigs() {
+	if KafkaCfg == nil {
+		KafkaCfg = &KafkaConfig{
+			BrokersHost:            getEnv("KAFKA_BROKER_HOSTS", ""),
+			TaskStatusUpdatedTopic: getEnv("TASK_STATUS_UPDATED_TOPIC", ""),
+		}
+	}
+}
