@@ -24,6 +24,7 @@ type Usecases struct {
 	AuthUsecase             domain_usecase.AuthUsecaseInterface
 	ListTaskUsecase         domain_usecase.ListTaskUsecaseInterface
 	UpdateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface
+	DeleteTaskUsecase       domain_usecase.DeleteTaskUsecaseInterface
 }
 
 type Repositories struct {
@@ -60,7 +61,7 @@ func NewApplication() *web.Server {
 
 	kafkaProducer := kafka_pkg.NewProducer(configs.KafkaCfg.TaskStatusUpdatedTopic)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase, usecases.UpdateTaskStatusUsecase, kafkaProducer)
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase, usecases.UpdateTaskStatusUsecase, usecases.DeleteTaskUsecase, kafkaProducer)
 
 	return srv
 }
@@ -72,6 +73,7 @@ func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
 	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository, repositories.UserRepository)
 	updateTaskStatusUsecase := usecase.NewUpdateTaskStatusUsecase(repositories.TaskRepository)
+	deleteTaskUsecase := usecase.NewDeleteTaskUsecase(repositories.TaskRepository)
 
 	return Usecases{
 		CreateTaskUsecase:       createTaskUsecase,
@@ -80,6 +82,7 @@ func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 		AuthUsecase:             authUsecase,
 		ListTaskUsecase:         listTaskUsecase,
 		UpdateTaskStatusUsecase: updateTaskStatusUsecase,
+		DeleteTaskUsecase:       deleteTaskUsecase,
 	}
 }
 

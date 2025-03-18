@@ -16,6 +16,7 @@ type Server struct {
 	AuthUsecase             domain_usecase.AuthUsecaseInterface
 	ListTaskUsecase         domain_usecase.ListTaskUsecaseInterface
 	UpdateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface
+	DeleteTaskUsecase       domain_usecase.DeleteTaskUsecaseInterface
 	KafkaProducer           *kafka.Writer
 }
 
@@ -27,6 +28,7 @@ func NewServer(
 	authUsecase domain_usecase.AuthUsecaseInterface,
 	listTaskUsecase domain_usecase.ListTaskUsecaseInterface,
 	updateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface,
+	deleteTaskUsecase domain_usecase.DeleteTaskUsecaseInterface,
 	kafkaProducer *kafka.Writer,
 ) *Server {
 	router := gin.Default()
@@ -38,6 +40,7 @@ func NewServer(
 		AuthUsecase:             authUsecase,
 		ListTaskUsecase:         listTaskUsecase,
 		UpdateTaskStatusUsecase: updateTaskStatusUsecase,
+		DeleteTaskUsecase:       deleteTaskUsecase,
 		KafkaProducer:           kafkaProducer,
 	}
 	server.router = Routes(router, server)

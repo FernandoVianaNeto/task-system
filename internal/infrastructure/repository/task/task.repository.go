@@ -2,6 +2,7 @@ package repository_task
 
 import (
 	"context"
+	"fmt"
 	"task-system/internal/domain/dto"
 	"task-system/internal/domain/entities"
 
@@ -16,7 +17,7 @@ func NewTaskRepository(db *gorm.DB) *TaskRepository {
 	return &TaskRepository{db: db}
 }
 
-func (r *TaskRepository) CreateTask(ctx context.Context, input entities.Task) error {
+func (t *TaskRepository) CreateTask(ctx context.Context, input entities.Task) error {
 	task := Task{
 		Uuid:    input.Uuid,
 		Owner:   input.Owner,
@@ -25,7 +26,7 @@ func (r *TaskRepository) CreateTask(ctx context.Context, input entities.Task) er
 		Status:  input.Status,
 	}
 
-	result := r.db.WithContext(ctx).Create(&task)
+	result := t.db.WithContext(ctx).Create(&task)
 
 	if result.Error != nil {
 		return result.Error
@@ -34,11 +35,11 @@ func (r *TaskRepository) CreateTask(ctx context.Context, input entities.Task) er
 	return nil
 }
 
-func (r *TaskRepository) ListTask(ctx context.Context, input dto.ListTaskDto) ([]*entities.Task, error) {
+func (t *TaskRepository) ListTask(ctx context.Context, input dto.ListTaskDto) ([]*entities.Task, error) {
 	var entity []*entities.Task
 	var result *gorm.DB
 
-	query := r.db.WithContext(ctx)
+	query := t.db.WithContext(ctx)
 
 	if input.Role == "developer" {
 		if input.Uuid != nil {
@@ -70,14 +71,28 @@ func (r *TaskRepository) ListTask(ctx context.Context, input dto.ListTaskDto) ([
 	return entity, result.Error
 }
 
-func (r *TaskRepository) UpdateTaskStatus(ctx context.Context, input dto.UpdateTaskStatusDto) error {
-	result := r.db.WithContext(ctx).
+func (t *TaskRepository) UpdateTaskStatus(ctx context.Context, input dto.UpdateTaskStatusDto) error {
+	result := t.db.WithContext(ctx).
 		Model(&entities.Task{}).
 		Where("uuid = ? AND owner = ?", input.TaskUuid, input.UserUuid).
 		Update("status", input.TaskStatus)
 
 	if result.Error != nil {
 		return result.Error
+	}
+
+	return nil
+}
+
+func (t *TaskRepository) DeleteTaskByUuid(ctx context.Context, input dto.DeleteTaskDto) error {
+	result := t.db.WithContext(ctx).Where("uuid = ?", input.Uuid).Delete(&entities.Task{})
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return fmt.Errorf("Task not found with uuid %s", input.Uuid)
 	}
 
 	return nil
