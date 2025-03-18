@@ -18,11 +18,12 @@ import (
 )
 
 type Usecases struct {
-	CreateTaskUsecase domain_usecase.CreateTaskUseCaseInterface
-	CreateUserUsecase domain_usecase.CreateUserUsecaseInterface
-	GetUserUsecase    domain_usecase.GetUserUsecaseInterface
-	AuthUsecase       domain_usecase.AuthUsecaseInterface
-	ListTaskUsecase   domain_usecase.ListTaskUsecaseInterface
+	CreateTaskUsecase       domain_usecase.CreateTaskUseCaseInterface
+	CreateUserUsecase       domain_usecase.CreateUserUsecaseInterface
+	GetUserUsecase          domain_usecase.GetUserUsecaseInterface
+	AuthUsecase             domain_usecase.AuthUsecaseInterface
+	ListTaskUsecase         domain_usecase.ListTaskUsecaseInterface
+	UpdateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface
 }
 
 type Repositories struct {
@@ -59,7 +60,7 @@ func NewApplication() *web.Server {
 
 	kafkaProducer := kafka_pkg.NewProducer(configs.KafkaCfg.TaskStatusUpdatedTopic)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase, kafkaProducer)
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase, usecases.UpdateTaskStatusUsecase, kafkaProducer)
 
 	return srv
 }
@@ -70,13 +71,15 @@ func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
 	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
 	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
 	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository, repositories.UserRepository)
+	updateTaskStatusUsecase := usecase.NewUpdateTaskStatusUsecase(repositories.TaskRepository)
 
 	return Usecases{
-		CreateTaskUsecase: createTaskUsecase,
-		CreateUserUsecase: createUserUsecase,
-		GetUserUsecase:    getUserUsecase,
-		AuthUsecase:       authUsecase,
-		ListTaskUsecase:   listTaskUsecase,
+		CreateTaskUsecase:       createTaskUsecase,
+		CreateUserUsecase:       createUserUsecase,
+		GetUserUsecase:          getUserUsecase,
+		AuthUsecase:             authUsecase,
+		ListTaskUsecase:         listTaskUsecase,
+		UpdateTaskStatusUsecase: updateTaskStatusUsecase,
 	}
 }
 

@@ -70,18 +70,15 @@ func (r *TaskRepository) ListTask(ctx context.Context, input dto.ListTaskDto) ([
 	return entity, result.Error
 }
 
-// func (r *TaskRepository) UpdateTaskByUser(ctx context.Context, userUuid string, input entities.Task) error {
-// 	result := r.db.WithContext(ctx).
-// 		Model(&models.PlanExtension{}).
-// 		Where("freight_id = ? AND disabled = ?", freightId, false).
-// 		Update("disabled", true).
-// 		Update("disable_reason", disableReason)
+func (r *TaskRepository) UpdateTaskStatus(ctx context.Context, input dto.UpdateTaskStatusDto) error {
+	result := r.db.WithContext(ctx).
+		Model(&Task{}).
+		Where("uuid = ? AND owner = ?", input.TaskUuid, input.UserUuid).
+		Update("status", input.TaskStatus)
 
-// 	if result.Error != nil {
-// 		return result.Error
-// 	}
+	if result.Error != nil {
+		return result.Error
+	}
 
-// 	log.Println(fmt.Sprintf("Extensão desativada para o frete %d", freightId))
-
-// 	return nil
-// }
+	return nil
+}

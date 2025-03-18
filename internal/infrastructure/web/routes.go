@@ -12,6 +12,7 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 		{
 			task.POST("/", server.CreateTaskHandler)
 			task.GET("/", server.ListTasksHandler)
+			task.PUT("/", server.UpdateTaskStatusHandler)
 		}
 	}
 

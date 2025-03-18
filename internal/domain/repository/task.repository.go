@@ -11,5 +11,5 @@ import (
 type TaskRepositoryInterface interface {
 	CreateTask(ctx context.Context, input entities.Task) error
 	ListTask(ctx context.Context, input dto.ListTaskDto) ([]*entities.Task, error)
-	// UpdateTaskByUser(ctx context.Context, userUuid string, input entities.Task) error
+	UpdateTaskStatus(ctx context.Context, input dto.UpdateTaskStatusDto) error
 }

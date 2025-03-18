@@ -29,7 +29,7 @@ func TaskUpdatedStatusHandler(msg kafka.Message) {
 			headersMap[header.Key] = string(header.Value)
 		}
 
-		fmt.Printf("📢 The tech performed the task %s (ID: %s) on %s. Status: %s\n",
+		fmt.Printf("The tech performed the task %s (ID: %s) on %s. Status: %s\n",
 			task.TaskTitle, task.TaskUuid, task.Timestamp, task.NewStatus)
 	}
 }
