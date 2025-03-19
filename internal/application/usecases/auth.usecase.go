@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	configs "task-system/cmd/config"
 	"task-system/internal/domain/dto"
 	domain_repository "task-system/internal/domain/repository"
@@ -27,6 +28,10 @@ func NewAuthUsecase(
 
 func (a *AuthUsecase) Execute(ctx context.Context, input dto.AuthDto) (domain_response.AuthResponse, error) {
 	user, err := a.UserRepository.GetUserByEmail(ctx, dto.GetUserByEmailDto{Email: input.Email})
+
+	if user.Uuid == "" {
+		return domain_response.AuthResponse{}, errors.New("User not found")
+	}
 
 	if err != nil {
 		return domain_response.AuthResponse{}, err

@@ -1,6 +1,14 @@
 Task System API 📝
+    Description:
+        API for task management, allowing task creation, listing, updating, and deletion, along with JWT authentication.
 
-    API for task management, allowing task creation, listing, updating, and deletion, along with JWT authentication.
+    Tips do use the system:
+
+        The system contains six endpoints, as explained above. Each endpoint requires a token for authentication, except for user creation and login. Each user has a role that determines which processes they can execute. The available roles are admin and developer.
+
+        The first step is to create a user by providing an email, name, role, and password. After that, you can access other routes by passing the token as authorization in the request headers.
+
+        A root file in this project includes an Insomnia collection containing all endpoints, environment variables (for Insomnia), and examples of request bodies and queries. (Task-system-insomnia.json)
 
 📌 Technologies Used
 
@@ -32,7 +40,7 @@ Create a .env file in the project root with the following configurations:
     MYSQL_NAME=mydatabase
     PASSWORD_SECRET_HASH="SECRET_HASH"
     TASK_STATUS_UPDATED_TOPIC="task-status-updated.events"
-    KAFKA_BROKERS_HOST=kafka
+    KAFKA_BROKER_HOSTS=kafka:9092
 
 2️⃣ Start the environment with Docker
 
