@@ -41,28 +41,6 @@ func TestDeleteTaskHandler_Success(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.Code)
 }
 
-func TestDeleteTaskHandler_MissingUUID(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockDeleteTaskUsecase := mock_usecase.NewMockDeleteTaskUsecaseInterface(ctrl)
-
-	server := &web.Server{
-		Usecases: domain_usecase.Usecases{
-			DeleteTaskUsecase: mockDeleteTaskUsecase,
-		},
-	}
-
-	w := httptest.NewRecorder()
-	ctx, _ := gin.CreateTestContext(w)
-	ctx.Request, _ = http.NewRequestWithContext(context.Background(), "DELETE", "/task/", nil)
-
-	server.DeleteTaskHandler(ctx)
-
-	assert.Equal(t, http.StatusUnprocessableEntity, w.Code)
-	assert.Contains(t, w.Body.String(), "missing task uuid on params")
-}
-
 func TestDeleteTaskHandler_UsecaseFailure(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()

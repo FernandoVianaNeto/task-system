@@ -45,7 +45,6 @@ func JwtAdminAuthMiddleware() gin.HandlerFunc {
 
 		if claims, ok := token.Claims.(*JwtAdminClaims); ok && token.Valid {
 			if claims.Role != "admin" {
-				fmt.Println("CAI AQUI E O CARA N É ADMIN")
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "Invalid token"})
 				c.Abort()
 				return
