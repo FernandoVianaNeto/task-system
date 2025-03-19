@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"log"
 	configs "task-system/cmd/config"
+	"task-system/internal/application/service"
 	usecase "task-system/internal/application/usecases"
 	domain_repository "task-system/internal/domain/repository"
+	domain_service "task-system/internal/domain/service"
 	domain_usecase "task-system/internal/domain/usecase"
 	repository_task "task-system/internal/infrastructure/repository/task"
 	repository_user "task-system/internal/infrastructure/repository/user"
@@ -30,6 +32,10 @@ type Usecases struct {
 type Repositories struct {
 	TaskRepository domain_repository.TaskRepositoryInterface
 	UserRepository domain_repository.UserRepositoryInterface
+}
+
+type Services struct {
+	PasswordHasherService domain_service.PasswordHasherServiceInterface
 }
 
 func NewApplication() *web.Server {
@@ -57,7 +63,9 @@ func NewApplication() *web.Server {
 
 	repositories := NewRepositories(ctx, db)
 
-	usecases := NewUsecases(ctx, repositories)
+	services := NewServices()
+
+	usecases := NewUsecases(ctx, repositories, services)
 
 	kafkaProducer := kafka_pkg.NewProducer(configs.KafkaCfg.TaskStatusUpdatedTopic)
 
@@ -66,9 +74,17 @@ func NewApplication() *web.Server {
 	return srv
 }
 
-func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
+func NewServices() Services {
+	passwordHasherService := service.NewPasswordHasherService()
+
+	return Services{
+		PasswordHasherService: passwordHasherService,
+	}
+}
+
+func NewUsecases(ctx context.Context, repositories Repositories, services Services) Usecases {
 	createTaskUsecase := usecase.NewCreateTaskUsecase(repositories.TaskRepository)
-	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository)
+	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository, services.PasswordHasherService)
 	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
 	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
 	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository, repositories.UserRepository)

@@ -5,25 +5,27 @@ import (
 	"task-system/internal/domain/dto"
 	"task-system/internal/domain/entities"
 	domain_repository "task-system/internal/domain/repository"
+	domain_service "task-system/internal/domain/service"
 	domain_usecase "task-system/internal/domain/usecase"
-
-	"golang.org/x/crypto/bcrypt"
 )
 
 type CreateUserUsecase struct {
-	UserRepository domain_repository.UserRepositoryInterface
+	UserRepository        domain_repository.UserRepositoryInterface
+	PasswordHasherService domain_service.PasswordHasherServiceInterface
 }
 
 func NewCreateUserUsecase(
 	repository domain_repository.UserRepositoryInterface,
+	hasherService domain_service.PasswordHasherServiceInterface,
 ) domain_usecase.CreateUserUsecaseInterface {
 	return &CreateUserUsecase{
-		UserRepository: repository,
+		UserRepository:        repository,
+		PasswordHasherService: hasherService,
 	}
 }
 
 func (c *CreateUserUsecase) Execute(ctx context.Context, input dto.CreateUserDto) error {
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(input.Password), 10)
+	hashedPassword, err := c.PasswordHasherService.HashPassword(input.Password, 10)
 
 	if err != nil {
 		return err

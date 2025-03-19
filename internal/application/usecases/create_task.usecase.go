@@ -31,5 +31,3 @@ func (c *CreateTaskUsecase) Execute(ctx context.Context, input dto.CreateTaskDto
 
 	return err
 }
-
-//docker exec -it mysql_go mysql -uuser -ppassword mydatabase
