@@ -19,12 +19,6 @@ COMPOSEV2 := $(shell docker compose version)
 # HELPERS
 # ==================================================================================== #
 
-## help: print this help message
-.PHONY: help
-help:
-	@echo 'Usage:'
-	@sed -n 's/^##//p' ${MAKEFILE_LIST} | column -t -s ':' | sed -e 's/^/ /'
-
 ## run/api: run the cmd/api application
 .PHONY: run/api
 run/api:
@@ -57,7 +51,7 @@ clean/apps:
 docker/build:
 	docker build -t task-system:latest -f .setup/build/Dockerfile .
 
-## docker/up: start the local stack in background
+## docker/up: start the local http server
 .PHONY: docker/up
 docker/up:
 	$(COMMAND) up -d
@@ -72,12 +66,6 @@ docker/down:
 docker/logs:
 	docker logs --tail 1000 -f task-system
 
-## test/local: local test all code
-.PHONY: test/local
-test/local:
-	go test -race -vet=off -coverpkg ./internal/... -v -coverprofile=cover.out ./...
-	go tool cover -html=cover.out
-
 ## test: test all code
 .PHONY: test
 test:
@@ -88,14 +76,6 @@ test:
 .PHONY: generate
 generate:
 	ROOT_DIR=$(shell pwd) go generate ./...
-
-## audit: tidy dependencies, format and vet all code
-.PHONY: audit
-audit:
-	@echo 'Formatting code...'
-	go fmt ./...
-	@echo 'Vetting code...'
-	golangci-lint run
 
 ## tidy: tidy dependencies
 .PHONY: tidy

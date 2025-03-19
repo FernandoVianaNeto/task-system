@@ -14,7 +14,7 @@ services:
       - .:/go/src
     depends_on:
       - mysql
-    command: [ "sh", "-c", "sleep 10 && /bin/application" ]
+    command: [ "sh", "-c", "sleep 10 && /bin/application http" ]
 
   mysql:
     image: mysql:8.0
@@ -46,13 +46,31 @@ services:
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG_RETENTION_HOURS: 48
       KAFKA_NUM_PARTITIONS: 3
     depends_on:
       - zookeeper
       
+  task-consumer:
+    build:
+      context: ./
+      dockerfile: .setup/build/Dockerfile
+    container_name: "task-system_consumer"
+    ports:
+      - "3001:3001"
+    env_file:
+      - .env
+    volumes:
+      - .:/go/src
+    depends_on:
+      - kafka 
+    command: [ "sh", "-c", "sleep 10 && /bin/application task-consumer" ]
+
   kafdrop:
     image: obsidiandynamics/kafdrop
     restart: always

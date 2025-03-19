@@ -19,7 +19,7 @@ type JwtClaims struct {
 
 func JwtAuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		secretKey := []byte(configs.ApplicationCfg.PasswordSecretHash)
+		secretKey := []byte(configs.ApplicationCfg.JwtSecret)
 
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" {

@@ -17,6 +17,7 @@ var (
 type ApplicationConfig struct {
 	AppPort            int
 	PasswordSecretHash string
+	JwtSecret          string
 }
 
 type MySqlConfig struct {
@@ -74,6 +75,7 @@ func initializeApplicationConfigs() {
 		ApplicationCfg = &ApplicationConfig{
 			AppPort:            getEnvAsInt("APP_PORT", 80),
 			PasswordSecretHash: getEnv("PASSWORD_SECRET_HASH", ""),
+			JwtSecret:          getEnv("JWT_SECRET", ""),
 		}
 	}
 }
