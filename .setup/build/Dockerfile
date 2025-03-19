@@ -37,4 +37,4 @@ COPY --from=builder /usr/src/app/cmd/config /configs
 
 COPY --from=builder /usr/src/app/bin/application /bin/application
 
-CMD ["/bin/application"]
+CMD ["/bin/application", "http"]

@@ -27,7 +27,6 @@ func ConnectToDatabase(input MySqlInput) (*gorm.DB, error) {
 
 		return nil, err
 	}
-
 	DB = db
 	log.Println("Database successfully connected")
 

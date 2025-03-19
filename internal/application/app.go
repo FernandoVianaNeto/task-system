@@ -5,28 +5,27 @@ import (
 	"fmt"
 	"log"
 	configs "task-system/cmd/config"
+	"task-system/internal/application/service"
 	usecase "task-system/internal/application/usecases"
 	domain_repository "task-system/internal/domain/repository"
+	domain_service "task-system/internal/domain/service"
 	domain_usecase "task-system/internal/domain/usecase"
 	repository_task "task-system/internal/infrastructure/repository/task"
 	repository_user "task-system/internal/infrastructure/repository/user"
 	"task-system/internal/infrastructure/web"
+	kafka_pkg "task-system/pkg/kafka"
 	mysql_pkg "task-system/pkg/mysql"
 
 	"gorm.io/gorm"
 )
 
-type Usecases struct {
-	CreateTaskUsecase domain_usecase.CreateTaskUseCaseInterface
-	CreateUserUsecase domain_usecase.CreateUserUsecaseInterface
-	GetUserUsecase    domain_usecase.GetUserUsecaseInterface
-	AuthUsecase       domain_usecase.AuthUsecaseInterface
-	ListTaskUsecase   domain_usecase.ListTaskUsecaseInterface
-}
-
 type Repositories struct {
 	TaskRepository domain_repository.TaskRepositoryInterface
 	UserRepository domain_repository.UserRepositoryInterface
+}
+
+type Services struct {
+	PasswordHasherService domain_service.PasswordHasherServiceInterface
 }
 
 func NewApplication() *web.Server {
@@ -54,26 +53,40 @@ func NewApplication() *web.Server {
 
 	repositories := NewRepositories(ctx, db)
 
-	usecases := NewUsecases(ctx, repositories)
+	services := NewServices()
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase)
+	usecases := NewUsecases(ctx, repositories, services)
+
+	kafkaProducer := kafka_pkg.NewProducer(configs.KafkaCfg.TaskStatusUpdatedTopic)
+
+	srv := web.NewServer(ctx, usecases, kafkaProducer)
 
 	return srv
 }
 
-func NewUsecases(ctx context.Context, repositories Repositories) Usecases {
+func NewServices() Services {
+	passwordHasherService := service.NewPasswordHasherService()
+
+	return Services{
+		PasswordHasherService: passwordHasherService,
+	}
+}
+
+func NewUsecases(ctx context.Context, repositories Repositories, services Services) domain_usecase.Usecases {
 	createTaskUsecase := usecase.NewCreateTaskUsecase(repositories.TaskRepository)
-	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository)
-	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
+	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository, services.PasswordHasherService)
 	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
 	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository, repositories.UserRepository)
+	updateTaskStatusUsecase := usecase.NewUpdateTaskStatusUsecase(repositories.TaskRepository)
+	deleteTaskUsecase := usecase.NewDeleteTaskUsecase(repositories.TaskRepository)
 
-	return Usecases{
-		CreateTaskUsecase: createTaskUsecase,
-		CreateUserUsecase: createUserUsecase,
-		GetUserUsecase:    getUserUsecase,
-		AuthUsecase:       authUsecase,
-		ListTaskUsecase:   listTaskUsecase,
+	return domain_usecase.Usecases{
+		CreateTaskUsecase:       createTaskUsecase,
+		CreateUserUsecase:       createUserUsecase,
+		AuthUsecase:             authUsecase,
+		ListTaskUsecase:         listTaskUsecase,
+		UpdateTaskStatusUsecase: updateTaskStatusUsecase,
+		DeleteTaskUsecase:       deleteTaskUsecase,
 	}
 }
 

@@ -37,7 +37,7 @@ func (s *Server) ListTasksHandler(ctx *gin.Context) {
 		listTaskDto.UserUuid = claims.Uuid
 	}
 
-	response, err := s.ListTaskUsecase.Execute(ctx, listTaskDto)
+	response, err := s.Usecases.ListTaskUsecase.Execute(ctx, listTaskDto)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})

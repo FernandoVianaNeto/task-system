@@ -56,5 +56,5 @@ func generateToken(email string, role string, userUuid string) (string, error) {
 		"exp":        time.Now().Add(time.Hour * 1).Unix(),
 	})
 
-	return token.SignedString([]byte(configs.ApplicationCfg.PasswordSecretHash))
+	return token.SignedString([]byte(configs.ApplicationCfg.JwtSecret))
 }

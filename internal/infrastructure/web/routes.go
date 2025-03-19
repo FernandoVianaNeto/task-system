@@ -7,11 +7,14 @@ import (
 )
 
 func Routes(engine *gin.Engine, server *Server) *gin.Engine {
+
 	{
-		task := engine.Group("/task", middleware.JwtAuthMiddleware())
+		task := engine.Group("/task")
 		{
-			task.POST("/", server.CreateTaskHandler)
-			task.GET("/", server.ListTasksHandler)
+			task.POST("/", middleware.JwtAuthMiddleware(), server.CreateTaskHandler)
+			task.GET("/", middleware.JwtAuthMiddleware(), server.ListTasksHandler)
+			task.PUT("/", middleware.JwtAuthMiddleware(), server.UpdateTaskStatusHandler)
+			task.DELETE("/:uuid", middleware.JwtAdminAuthMiddleware(), server.DeleteTaskHandler)
 		}
 	}
 
@@ -19,7 +22,6 @@ func Routes(engine *gin.Engine, server *Server) *gin.Engine {
 		user := engine.Group("/user")
 		{
 			user.POST("/", server.CreateUserHandler)
-			user.GET("/:uuid", server.GetUserHandler, middleware.JwtAuthMiddleware())
 		}
 	}
 

@@ -11,11 +11,13 @@ import (
 var (
 	ApplicationCfg *ApplicationConfig
 	MySqlCfg       *MySqlConfig
+	KafkaCfg       *KafkaConfig
 )
 
 type ApplicationConfig struct {
 	AppPort            int
 	PasswordSecretHash string
+	JwtSecret          string
 }
 
 type MySqlConfig struct {
@@ -26,10 +28,10 @@ type MySqlConfig struct {
 	Name     string
 }
 
-// type KafkaConfig struct {
-// 	BrokersHost           string
-// 	PushNotificationTopic string
-// } // TODO LATER
+type KafkaConfig struct {
+	BrokersHost            string
+	TaskStatusUpdatedTopic string
+}
 
 func initialize() {
 	if err := godotenv.Load(); err != nil {
@@ -41,6 +43,11 @@ func InitializeConfigs() {
 	initialize()
 	initializeApplicationConfigs()
 	initializeMySqlConfings()
+	initializeKafkaConfigs()
+}
+
+func InitializeWorkerConfig() {
+	initializeKafkaConfigs()
 }
 
 func getEnv(key string, defaultVal string) string {
@@ -68,6 +75,7 @@ func initializeApplicationConfigs() {
 		ApplicationCfg = &ApplicationConfig{
 			AppPort:            getEnvAsInt("APP_PORT", 80),
 			PasswordSecretHash: getEnv("PASSWORD_SECRET_HASH", ""),
+			JwtSecret:          getEnv("JWT_SECRET", ""),
 		}
 	}
 }
@@ -84,10 +92,11 @@ func initializeMySqlConfings() {
 	}
 }
 
-// func initializeKafkaConfigs() {
-// 	if KafkaCfg == nil {
-// 		KafkaCfg = &KafkaConfig{
-// 			BrokersHost: getEnv("KAFKA_BROKER_HOSTS", ""),
-// 		}
-// 	}
-// } // TODO LATER
+func initializeKafkaConfigs() {
+	if KafkaCfg == nil {
+		KafkaCfg = &KafkaConfig{
+			BrokersHost:            getEnv("KAFKA_BROKER_HOSTS", "localhost:9092"),
+			TaskStatusUpdatedTopic: getEnv("TASK_STATUS_UPDATED_TOPIC", ""),
+		}
+	}
+}
