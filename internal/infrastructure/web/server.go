@@ -12,7 +12,6 @@ type Server struct {
 	router                  *gin.Engine
 	CreateTaskUsecase       domain_usecase.CreateTaskUseCaseInterface
 	CreateUserUsecase       domain_usecase.CreateUserUsecaseInterface
-	GetUserUsecase          domain_usecase.GetUserUsecaseInterface
 	AuthUsecase             domain_usecase.AuthUsecaseInterface
 	ListTaskUsecase         domain_usecase.ListTaskUsecaseInterface
 	UpdateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface
@@ -24,7 +23,6 @@ func NewServer(
 	ctx context.Context,
 	createTaskUsecase domain_usecase.CreateTaskUseCaseInterface,
 	createUserUsecase domain_usecase.CreateUserUsecaseInterface,
-	getUserUsecase domain_usecase.GetUserUsecaseInterface,
 	authUsecase domain_usecase.AuthUsecaseInterface,
 	listTaskUsecase domain_usecase.ListTaskUsecaseInterface,
 	updateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface,
@@ -36,7 +34,6 @@ func NewServer(
 	server := &Server{
 		CreateTaskUsecase:       createTaskUsecase,
 		CreateUserUsecase:       createUserUsecase,
-		GetUserUsecase:          getUserUsecase,
 		AuthUsecase:             authUsecase,
 		ListTaskUsecase:         listTaskUsecase,
 		UpdateTaskStatusUsecase: updateTaskStatusUsecase,

@@ -69,7 +69,7 @@ func NewApplication() *web.Server {
 
 	kafkaProducer := kafka_pkg.NewProducer(configs.KafkaCfg.TaskStatusUpdatedTopic)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.GetUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase, usecases.UpdateTaskStatusUsecase, usecases.DeleteTaskUsecase, kafkaProducer)
+	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase, usecases.UpdateTaskStatusUsecase, usecases.DeleteTaskUsecase, kafkaProducer)
 
 	return srv
 }
@@ -85,7 +85,6 @@ func NewServices() Services {
 func NewUsecases(ctx context.Context, repositories Repositories, services Services) Usecases {
 	createTaskUsecase := usecase.NewCreateTaskUsecase(repositories.TaskRepository)
 	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository, services.PasswordHasherService)
-	getUserUsecase := usecase.NewGetUserUsecase(repositories.UserRepository)
 	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
 	listTaskUsecase := usecase.NewListTaskUsecase(repositories.TaskRepository, repositories.UserRepository)
 	updateTaskStatusUsecase := usecase.NewUpdateTaskStatusUsecase(repositories.TaskRepository)
@@ -94,7 +93,6 @@ func NewUsecases(ctx context.Context, repositories Repositories, services Servic
 	return Usecases{
 		CreateTaskUsecase:       createTaskUsecase,
 		CreateUserUsecase:       createUserUsecase,
-		GetUserUsecase:          getUserUsecase,
 		AuthUsecase:             authUsecase,
 		ListTaskUsecase:         listTaskUsecase,
 		UpdateTaskStatusUsecase: updateTaskStatusUsecase,
