@@ -7,6 +7,12 @@ import (
 	kafka_pkg "task-system/pkg/kafka"
 )
 
+//go:generate mockgen -source $GOFILE -package $GOPACKAGE -destination $ROOT_DIR/test/mocks/$GOPACKAGE/mock_$GOFILE
+
+type KafkaConsumerInterface interface {
+	ReadMessage(ctx context.Context) ([]byte, error)
+}
+
 func StartTaskStatusUpdatedConsumer(ctx context.Context) {
 	consumer := kafka_pkg.NewKafkaConsumer(configs.KafkaCfg.TaskStatusUpdatedTopic)
 
