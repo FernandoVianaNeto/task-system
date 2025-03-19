@@ -45,7 +45,7 @@ func (s *Server) UpdateTaskStatusHandler(ctx *gin.Context) {
 	updateTaskStatusDto.TaskStatus = req.NewStatus
 	updateTaskStatusDto.TaskUuid = req.TaskUuid
 
-	err = s.UpdateTaskStatusUsecase.Execute(ctx, updateTaskStatusDto)
+	err = s.Usecases.UpdateTaskStatusUsecase.Execute(ctx, updateTaskStatusDto)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})

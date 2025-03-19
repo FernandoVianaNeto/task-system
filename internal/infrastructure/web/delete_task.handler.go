@@ -16,7 +16,7 @@ func (s *Server) DeleteTaskHandler(ctx *gin.Context) {
 		return
 	}
 
-	err := s.DeleteTaskUsecase.Execute(ctx, dto.DeleteTaskDto{Uuid: req.Uuid})
+	err := s.Usecases.DeleteTaskUsecase.Execute(ctx, dto.DeleteTaskDto{Uuid: req.Uuid})
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})

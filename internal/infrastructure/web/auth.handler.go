@@ -15,7 +15,7 @@ func (s *Server) AuthHandler(ctx *gin.Context) {
 		return
 	}
 
-	response, err := s.AuthUsecase.Execute(ctx, req)
+	response, err := s.Usecases.AuthUsecase.Execute(ctx, req)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})

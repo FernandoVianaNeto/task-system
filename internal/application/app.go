@@ -19,16 +19,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type Usecases struct {
-	CreateTaskUsecase       domain_usecase.CreateTaskUseCaseInterface
-	CreateUserUsecase       domain_usecase.CreateUserUsecaseInterface
-	GetUserUsecase          domain_usecase.GetUserUsecaseInterface
-	AuthUsecase             domain_usecase.AuthUsecaseInterface
-	ListTaskUsecase         domain_usecase.ListTaskUsecaseInterface
-	UpdateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface
-	DeleteTaskUsecase       domain_usecase.DeleteTaskUsecaseInterface
-}
-
 type Repositories struct {
 	TaskRepository domain_repository.TaskRepositoryInterface
 	UserRepository domain_repository.UserRepositoryInterface
@@ -69,7 +59,7 @@ func NewApplication() *web.Server {
 
 	kafkaProducer := kafka_pkg.NewProducer(configs.KafkaCfg.TaskStatusUpdatedTopic)
 
-	srv := web.NewServer(ctx, usecases.CreateTaskUsecase, usecases.CreateUserUsecase, usecases.AuthUsecase, usecases.ListTaskUsecase, usecases.UpdateTaskStatusUsecase, usecases.DeleteTaskUsecase, kafkaProducer)
+	srv := web.NewServer(ctx, usecases, kafkaProducer)
 
 	return srv
 }
@@ -82,7 +72,7 @@ func NewServices() Services {
 	}
 }
 
-func NewUsecases(ctx context.Context, repositories Repositories, services Services) Usecases {
+func NewUsecases(ctx context.Context, repositories Repositories, services Services) domain_usecase.Usecases {
 	createTaskUsecase := usecase.NewCreateTaskUsecase(repositories.TaskRepository)
 	createUserUsecase := usecase.NewCreateUserUsecase(repositories.UserRepository, services.PasswordHasherService)
 	authUsecase := usecase.NewAuthUsecase(repositories.UserRepository)
@@ -90,7 +80,7 @@ func NewUsecases(ctx context.Context, repositories Repositories, services Servic
 	updateTaskStatusUsecase := usecase.NewUpdateTaskStatusUsecase(repositories.TaskRepository)
 	deleteTaskUsecase := usecase.NewDeleteTaskUsecase(repositories.TaskRepository)
 
-	return Usecases{
+	return domain_usecase.Usecases{
 		CreateTaskUsecase:       createTaskUsecase,
 		CreateUserUsecase:       createUserUsecase,
 		AuthUsecase:             authUsecase,

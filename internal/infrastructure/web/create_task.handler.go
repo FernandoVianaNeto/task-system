@@ -34,7 +34,7 @@ func (s *Server) CreateTaskHandler(ctx *gin.Context) {
 	dto.Summary = req.Summary
 	dto.Title = req.Title
 
-	err = s.CreateTaskUsecase.Execute(ctx, dto)
+	err = s.Usecases.CreateTaskUsecase.Execute(ctx, dto)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})

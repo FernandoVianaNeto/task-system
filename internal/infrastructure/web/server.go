@@ -9,36 +9,28 @@ import (
 )
 
 type Server struct {
-	router                  *gin.Engine
-	CreateTaskUsecase       domain_usecase.CreateTaskUseCaseInterface
-	CreateUserUsecase       domain_usecase.CreateUserUsecaseInterface
-	AuthUsecase             domain_usecase.AuthUsecaseInterface
-	ListTaskUsecase         domain_usecase.ListTaskUsecaseInterface
-	UpdateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface
-	DeleteTaskUsecase       domain_usecase.DeleteTaskUsecaseInterface
-	KafkaProducer           *kafka.Writer
+	router        *gin.Engine
+	Usecases      domain_usecase.Usecases
+	KafkaProducer *kafka.Writer
 }
 
 func NewServer(
 	ctx context.Context,
-	createTaskUsecase domain_usecase.CreateTaskUseCaseInterface,
-	createUserUsecase domain_usecase.CreateUserUsecaseInterface,
-	authUsecase domain_usecase.AuthUsecaseInterface,
-	listTaskUsecase domain_usecase.ListTaskUsecaseInterface,
-	updateTaskStatusUsecase domain_usecase.UpdateTaskStatusUsecaseInterface,
-	deleteTaskUsecase domain_usecase.DeleteTaskUsecaseInterface,
+	usecases domain_usecase.Usecases,
 	kafkaProducer *kafka.Writer,
 ) *Server {
 	router := gin.Default()
 
 	server := &Server{
-		CreateTaskUsecase:       createTaskUsecase,
-		CreateUserUsecase:       createUserUsecase,
-		AuthUsecase:             authUsecase,
-		ListTaskUsecase:         listTaskUsecase,
-		UpdateTaskStatusUsecase: updateTaskStatusUsecase,
-		DeleteTaskUsecase:       deleteTaskUsecase,
-		KafkaProducer:           kafkaProducer,
+		Usecases: domain_usecase.Usecases{
+			CreateTaskUsecase:       usecases.CreateTaskUsecase,
+			CreateUserUsecase:       usecases.CreateUserUsecase,
+			AuthUsecase:             usecases.AuthUsecase,
+			ListTaskUsecase:         usecases.ListTaskUsecase,
+			UpdateTaskStatusUsecase: usecases.UpdateTaskStatusUsecase,
+			DeleteTaskUsecase:       usecases.DeleteTaskUsecase,
+		},
+		KafkaProducer: kafkaProducer,
 	}
 	server.router = Routes(router, server)
 

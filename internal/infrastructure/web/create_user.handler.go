@@ -15,14 +15,12 @@ func (s *Server) CreateUserHandler(ctx *gin.Context) {
 		return
 	}
 
-	err := s.CreateUserUsecase.Execute(ctx, req)
+	err := s.Usecases.CreateUserUsecase.Execute(ctx, req)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnprocessableEntity, gin.H{"message": err.Error()})
 		return
 	}
-
-
 
 	ctx.Status(http.StatusOK)
 }
